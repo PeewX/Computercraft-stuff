@@ -8,7 +8,7 @@ function p.init()
 	term.setCursorPos(1,1)
 	
 	--Variabels
-	p.trash = {"cobblestone"}
+	p.trash = {"cobblestone", "dirt", "gravel", "lead", "yellorite"}
 	p.length = 0
 	p.availableSlots = 0
 	p.trashSlots = {}
@@ -24,24 +24,28 @@ function p.run()
 	while true do
 		p.checkInventory()
 		p.checkForRefuel()
-		if not p.dropTrash() then 
-			return false
+		if not p.dropTrash() then
+			p.print("out of space")
+			break
 		end
-		t.dig()
-		t.forward()
+
+		p.digUp()
 		t.turnLeft()
-		t.dig()
+		p.dig()
+		p.up()
+		p.dig()
 		t.turnRight()
 		t.turnRight()
-		t.dig()
-		t.digUp()
-		t.up()
-		t.dig()
+		p.dig()
+		p.down()
+		p.dig()
 		t.turnLeft()
-		t.turnLeft()
-		t.dig()
-		t.turnRight()
-		t.down()
+		
+		p.dig()
+		if not p.forward() then
+			print("Aborted")
+			break
+		end
 		
 		p.length = p.length + 1
 		if p.length == 15 then
@@ -82,6 +86,78 @@ function p.checkForRefuel()
 		table.remove(p.fuelSlots, #p.fuelSlots)
 		t.refuel(32)
 	end
+end
+
+function p.dig()
+	while t.detect() do
+		if t.dig() then
+			sleep(0.5)
+		else
+			return false
+		end
+	end
+	return true
+end
+
+function p.digUp()
+	while t.detectUp() do
+		if t.digUp() then
+			sleep(0.5)
+		else
+			return false
+		end
+	end
+	return true
+end
+
+function p.digDown()
+	while t.detectDown() do
+		if t.digDown() then
+			sleep(0.5)
+		else
+			return false
+		end
+	end
+	return true
+end
+
+function p.up()
+	while not t.up() do
+		if t.detectUp() then
+			if not p.digUp() then
+				return false
+			end
+		else
+			sleep( 0.5 )
+		end
+	end
+	return true
+end
+
+function p.down()
+	while not t.down() do
+		if t.detectDown() then
+			if not p.digDown() then
+				return false
+			end
+		else
+			sleep( 0.5 )
+		end
+	end
+	return true
+end
+
+function p.forward()
+	while not t.forward() do
+		if t.detect() then
+			if not p.dig() then
+				return false
+			end
+		else
+			sleep( 0.5 )
+		end
+	end
+	return true
 end
 
 function p.dropTrash()
