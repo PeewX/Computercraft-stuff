@@ -40,8 +40,8 @@ function p.run()
 		p.down()
 		p.dig()
 		t.turnLeft()
-		
 		p.dig()
+		
 		if not p.forward() then
 			print("Aborted")
 			break
@@ -49,13 +49,29 @@ function p.run()
 		
 		p.length = p.length + 1
 		if p.length == 15 then
-			t.turnLeft()
-			t.turnLeft()
-			t.select(16)
-			t.place()
-			t.turnLeft()
-			t.turnLeft()
 			p.length = 0
+			p.placeTorch()
+		end
+	end
+end
+
+function p.placeTorch()
+	if t.getItemDetail(16) and t.getItemDetail(16).name:lower():find("torch") then
+		t.select(16)
+		t.turnLeft()
+		t.turnLeft()
+		t.place()
+		t.turnLeft()
+		t.turnLeft()
+	end
+end
+
+function p.sortInventory()
+	p.current = {}
+	for i = 16, 1, -1 do
+		t.select(i)
+		for d = 1, 16 do
+			if i ~= k and t.transferTo(d) then break end
 		end
 	end
 end
