@@ -2,14 +2,14 @@
 local t = turtle
 local p = {forward = 0}
 
-
 function p.init()
 	term.clear()
 	term.setCursorPos(1,1)
 	
-	--Variabels
+	--Variables
 	p.trash = {"cobblestone", "dirt", "gravel", "lead", "yellorite"}
-	p.length = 0
+	--p.keepMe = {"iron", "thermalfoundation", "coal", "gold", "lapis", "uran", "flint", "torch", "emerald"}
+	p.cLength = 0
 	p.availableSlots = 0
 	p.trashSlots = {}
 	p.fuelSlots = {}
@@ -17,16 +17,55 @@ function p.init()
 	p.checkInventory()
 	p.checkForRefuel()
 	
+	if #{...} ~= 2 then
+		p.print("Invalid usage!")
+		p.print("pew {int:length} {bool:redstoneSignal}")
+		return
+	else
+		p.length = math.abs({...}[1])
+		p.waitForRedstone = {...}[2]
+	end
+	
+	p.availableSteps = t.getFuelLevel()/3 --Think the turtle need 3 fuel for one step
+	p.print("Length set to: " .. p.length)
+	if p.availableSteps < p.length then
+		p.print("Without refuel I can only do " .. p.availableSteps)
+	end
+	
+	--Wait for redstone if we want
+	if p.waitForRedstone then
+		p.print("Wait for redstone signal to start.")
+		while not redstone.getInput("back") do
+			sleep(0.5)
+		end
+	end
+	
+	--Let the turtle do his job.. :>
 	p.run()
 end
 
 function p.run()
 	while true do
+		--Check at first some states
 		p.checkInventory()
 		p.checkForRefuel()
-		if not p.dropTrash() then
-			p.print("out of space")
-			break
+		
+		if p.availableSlots == 0 then
+			--If no slot available, sort inventory and check again
+			p.sortInventory()
+			p.checkInventory()
+			
+			if p.availableSlots == 0 then
+				--If there is still no slot available, drop trash
+				if not p.dropTrash() then
+					--In case of no drop, wait for manual clearing
+					p.print("No empty slot! Wait for manual clearing")
+					while p.availableSlots == 0 do
+						p.checkInventory()
+						sleep(0.5)
+					end
+				end
+			end
 		end
 
 		p.digUp()
@@ -47,10 +86,15 @@ function p.run()
 			break
 		end
 		
-		p.length = p.length + 1
-		if p.length == 15 then
-			p.length = 0
+		p.cLength = p.cLength + 1
+		if p.cLength%15 == 0 then
 			p.placeTorch()
+		end
+		
+		p.display()
+		if p.cLength >= p.length then
+			print("Done.")
+			break
 		end
 	end
 end
@@ -67,7 +111,6 @@ function p.placeTorch()
 end
 
 function p.sortInventory()
-	p.current = {}
 	for i = 16, 1, -1 do
 		t.select(i)
 		for d = 1, 16 do
@@ -97,10 +140,24 @@ end
 
 function p.checkForRefuel()
 	if t.getFuelLevel() == 0 then
-		p.print("Refuel!")
-		t.select(p.fuelSlots[#p.fuelSlots])
-		table.remove(p.fuelSlots, #p.fuelSlots)
-		t.refuel(32)
+		p.print("Fuel is empty!")
+		if #p.fuelSlots > 0 then
+			p.print("Auto refuel available..")
+			t.select(p.fuelSlots[#p.fuelSlots])
+			table.remove(p.fuelSlots, #p.fuelSlots)
+			t.refuel(16)
+		else
+			p.print("Waiting for manual refuel..")
+			while t.getFuelLevel() == 0 do
+				for i = 1, 16 do
+					t.select(i)
+					if t.refuel(16) then
+						print("Success!")
+						break
+					end
+				end
+			end
+		end
 	end
 end
 
@@ -197,6 +254,7 @@ function p.isTrash(itemName)
 			return true
 		end
 	end
+	return true
 end
 
 function p.isInTable(tTheTable, x)
@@ -206,6 +264,16 @@ function p.isInTable(tTheTable, x)
 		end
 	end
 	return false
+end
+
+function p.display()
+	term.clear()
+	term.setCursorPos(1,1)
+	print("PewX Miner v1 (Rev.4)")
+	print("----------------------------------")
+	print(("Progress: %s/%s (%s)"):format(p.cLength, p.length, p.cLength/p.length*100))
+	print(("Fuel: %s (%s)"):format(t.getFuelLevel(), t.getFuelLevel()/3))
+	print(("Trash count: %s"):format(#p.trashSlots))
 end
 
 function p.print(t)
