@@ -2,13 +2,40 @@
 local t = turtle
 local p = {forward = 0}
 
+function tobool(val)
+	local t = type(val)
+	if (t == 'nil') then
+			return false
+	elseif (t == 'boolean') then
+			return val
+	elseif (t == 'number') then
+			return (val ~= 0)
+	elseif (t == 'string') then
+			return ((val ~= '0') and (val ~= 'false'))
+	end
+	return false
+end
+
+local input = {...}
+if #input < 1 then
+	--term.clear()
+	--term.setCursorPos(1,1)
+	print("Invalid usage!")
+	print("pew {int:length} [{bool:redstoneSignal} {bool:returnHome}]")
+	return
+else
+	p.length = math.abs(input[1])
+	p.waitForRedstone = tobool(input[2])
+	p.returnHome = tobool(input[3])
+end
+
 function p.init()
 	term.clear()
 	term.setCursorPos(1,1)
 	
 	--Variables
-	p.trash = {"cobblestone", "dirt", "gravel", "lead", "yellorite"}
-	--p.keepMe = {"iron", "thermalfoundation", "coal", "gold", "lapis", "uran", "flint", "torch", "emerald"}
+	--p.trash = {"cobblestone", "dirt", "gravel", "lead", "yellorite"}
+	p.keepMe = {"iron", "thermalfoundation", "appliedenergistics2", "coal", "gold", "lapis", "uran", "flint", "torch", "emerald"}
 	p.cLength = 0
 	p.availableSlots = 0
 	p.trashSlots = {}
@@ -17,16 +44,7 @@ function p.init()
 	p.checkInventory()
 	p.checkForRefuel()
 	
-	if #{...} ~= 2 then
-		p.print("Invalid usage!")
-		p.print("pew {int:length} {bool:redstoneSignal}")
-		return
-	else
-		p.length = math.abs({...}[1])
-		p.waitForRedstone = {...}[2]
-	end
-	
-	p.availableSteps = t.getFuelLevel()/3 --Think the turtle need 3 fuel for one step
+	p.availableSteps = math.floor(t.getFuelLevel()/3) --Think the turtle need 3 fuel for one step
 	p.print("Length set to: " .. p.length)
 	if p.availableSteps < p.length then
 		p.print("Without refuel I can only do " .. p.availableSteps)
@@ -34,13 +52,15 @@ function p.init()
 	
 	--Wait for redstone if we want
 	if p.waitForRedstone then
-		p.print("Wait for redstone signal to start.")
+		print("")
+		p.print("I Just wait for a redstone signal :>")
 		while not redstone.getInput("back") do
 			sleep(0.5)
 		end
 	end
 	
 	--Let the turtle do his job.. :>
+	p.display()
 	p.run()
 end
 
@@ -93,7 +113,24 @@ function p.run()
 		
 		p.display()
 		if p.cLength >= p.length then
-			print("Done.")
+				term.clear()
+				term.setCursorPos(1,1)
+				p.print("Done!")
+				
+				if p.returnHome then
+					term.clear()
+					term.setCursorPos(1,1)
+					p.print("RETURN  TO HOME")
+					
+					t.turnLeft()
+					t.turnLeft()
+					for k = 1, p.length do
+						p.checkForRefuel()
+						p.forward()
+					end
+					t.turnLeft()
+					t.turnLeft()
+				end
 			break
 		end
 	end
@@ -139,7 +176,7 @@ function p.checkInventory()
 end
 
 function p.checkForRefuel()
-	if t.getFuelLevel() == 0 then
+	if t.getFuelLevel() <= 3 then
 		p.print("Fuel is empty!")
 		if #p.fuelSlots > 0 then
 			p.print("Auto refuel available..")
@@ -148,7 +185,7 @@ function p.checkForRefuel()
 			t.refuel(16)
 		else
 			p.print("Waiting for manual refuel..")
-			while t.getFuelLevel() == 0 do
+			while t.getFuelLevel() <= 3 do
 				for i = 1, 16 do
 					t.select(i)
 					if t.refuel(16) then
@@ -249,12 +286,21 @@ function p.dropTrash()
 end
 
 function p.isTrash(itemName)
-	for _, trashItem in ipairs(p.trash) do
-		if itemName:lower():find(trashItem) then
-			return true
+	if p.trash then
+		for _, trashItem in ipairs(p.trash) do
+			if itemName:lower():find(trashItem) then
+				return true
+			end
 		end
+		return false
+	elseif p.keepMe then
+		for _, trashItem in ipairs(p.keepMe) do
+			if itemName:lower():find(trashItem) then
+				return false
+			end
+		end
+		return true
 	end
-	return true
 end
 
 function p.isInTable(tTheTable, x)
@@ -269,11 +315,19 @@ end
 function p.display()
 	term.clear()
 	term.setCursorPos(1,1)
-	print("PewX Miner v1 (Rev.4)")
-	print("----------------------------------")
-	print(("Progress: %s/%s (%s)"):format(p.cLength, p.length, p.cLength/p.length*100))
-	print(("Fuel: %s (%s)"):format(t.getFuelLevel(), t.getFuelLevel()/3))
+	print("")		
+	print("---------------------------------------")
+	print(("Progress: %s/%s (%s%%)"):format(p.cLength, p.length, p.cLength/p.length*100))
+	print(("Fuel: %s (%s)"):format(t.getFuelLevel(), math.floor(t.getFuelLevel()/3)))
 	print(("Trash count: %s"):format(#p.trashSlots))
+	print("")
+	print(("Place torch in: %s"):format(15-p.cLength%15))
+	local x, y = term.getSize()
+	term.setCursorPos(1, y)
+	print(string.rep("=", p.cLength/p.length*x) .. ">")
+	term.scroll(-1)
+	term.setCursorPos(1,1)
+	print("PewX Miner v1                   (Rev.5)")
 end
 
 function p.print(t)
