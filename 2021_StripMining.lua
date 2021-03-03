@@ -87,7 +87,7 @@ function p.turn()
 end
 
 function p.checkFuel()
-	fuel = t.getFuelLevel()
+	local fuel = t.getFuelLevel()
 	if fuel < p.minFuel then
 		return false
 	end
@@ -96,7 +96,7 @@ function p.checkFuel()
 end
 
 function p.refuel()
-	item = nil
+	local item = nil
 	for i = 1, 16 do
 		item = t.getItemDetail(i)
 		if item and p.isInTable(p.burnable, item.name) then
@@ -117,9 +117,9 @@ function p.checkInventorySpace()
 end
 
 function p.freeInventory()
-	item = nil
-	chestPlaced = false;
-	itemsToDrop = {}
+	local item = nil
+	local chestPlaced = false;
+	local itemsToDrop = {}
 
 	p.refuel()
 
@@ -145,8 +145,8 @@ function p.freeInventory()
 	end
 
 	-- drop items into the chest
-	for k in ipairs(itemsToDrop) do
-		t.select(k)
+	for _, v in ipairs(itemsToDrop) do
+		t.select(v)
 		t.dropDown()
 	end
 
