@@ -20,7 +20,7 @@ local p = {
 
 -- TODO:
 -- redNet Service
--- Programm arguments
+-- Program arguments
 
 function main()
 	-- start turtle thread (Coroutine?)
