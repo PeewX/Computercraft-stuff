@@ -1,4 +1,5 @@
 --TurtleNET Server
+--Pastebin: https://pastebin.com/q9Ngw9Fg
 ------------------
 local modem = rednet.open("right")
 local mon = peripheral.find("monitor")

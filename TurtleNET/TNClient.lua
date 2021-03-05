@@ -1,4 +1,6 @@
 --TurtleNET Client
+--Pastebin: https://pastebin.com/JN8iU1V6
+------------------
 rednet.open("right");
 TN = {}
 
@@ -23,6 +25,3 @@ function TN.sendInfo(info)
     }
     rednet.broadcast(msg, "TN")
 end
-
-TN.register()
-TN.sendInfo()

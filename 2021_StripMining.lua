@@ -1,5 +1,7 @@
+-- StripMining
 -- ©2021 Namo
-
+-- Pastebin: https://pastebin.com/7Jt83cY2
+------------------------------------------
 local t = turtle
 local stats = {} -- Containing Turtle Infos (redNet)
 local redNet = {}
@@ -17,6 +19,7 @@ local p = {
 		"charcoal"
 	}
 }
+------------------------------------------
 
 -- TODO:
 -- redNet Service
