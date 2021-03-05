@@ -1,6 +1,6 @@
 --TurtleNET Client
 rednet.open("right");
-local TN = {}
+TN = {}
 
 function TN.register()
     local msg = {
@@ -13,10 +13,11 @@ function TN.register()
     rednet.broadcast(msg, "TN")
 end
 
-function TN.sendInfo()
+function TN.sendInfo(info)
     local msg = {
         cmd = "status",
         data = {
+            infoMsg = info,
             gps = { gps.locate() }
         }
     }
