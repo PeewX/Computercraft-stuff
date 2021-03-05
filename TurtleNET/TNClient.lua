@@ -1,7 +1,7 @@
 --TurtleNET Client
 --Pastebin: https://pastebin.com/JN8iU1V6
 ------------------
-rednet.open("right");
+rednet.open("left");
 TN = {}
 
 function TN.register()
