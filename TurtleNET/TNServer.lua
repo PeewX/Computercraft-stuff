@@ -20,32 +20,31 @@ function TN.updateMonitor()
 
     mon.setCursorPos(1, 2)
     mon.write("Registered Turtles:")
+	
     if #TN.registered > 0 then
-        local posX = 1
+        local yOffset = 1
+		
         for k, v in pairs(TN.registered) do
-            mon.setCursorPos(1, 2+posX)
+            mon.setCursorPos(1, 2 + yOffset)
             mon.write(v.label)
 
             if v.infoMsg then
-                posX = posX + 1
-                mon.setCursorPos(1, 2+posX)
-                mon.write("\t")
-                mon.write("Msg: \"" .. v.infoMsg .. "\"")
+                yOffset = yOffset + 1
+                mon.setCursorPos(1, 2 + yOffset)
+                mon.write(("  Msg: '%s'"):format(v.infoMsg))
             end
             if v.gps then
-                posX = posX + 1
-                mon.setCursorPos(1, 2+posX)
-                mon.write(" ")
-                mon.write("Location: " .. v.gps[1] .. ", " .. v.gps[2] .. ", " .. v.gps[3])
+                yOffset = yOffset + 1
+                mon.setCursorPos(1, 2 + yOffset)
+                mon.write(("  GPS: %d, %d, %d"):format(unpack(v.gps)))
             end
             if v.lastContact then
-                posX = posX + 1
-                mon.setCursorPos(1, 2+posX)
-                mon.write(" ")
-                mon.write("Last contact: " .. math.ceil((os.epoch("utc") - v.lastContact)/1000) .. "s ago")
+                yOffset = yOffset + 1
+                mon.setCursorPos(1, 2 + yOffset)
+				mon.write(("  Last contact: %ds ago"):format((os.epoch("utc") - v.lastContact)/1000))
             end
 
-            posX = posX + 1
+            yOffset = yOffset + 1
         end
     else
         mon.setCursorPos(1, 3)
@@ -62,17 +61,17 @@ function TN.receive()
         elseif message.cmd == "status" then
             TN.recvInfo(sId, message.data)
         end
-
-        TN.updateMonitor()
     end
+	
+	TN.updateMonitor()
 end
 
 function TN.register(TId, data)
-    if (#TN.registered > 0) then
-        for k, v in pairs(TN.registered) do
+    if #TN.registered > 0 then
+        for _, v in pairs(TN.registered) do
             if v.Id == TId then
-                print("Turtle " .. TId .. " is already registered")
-                return;
+                print(("Turtle %s is already registered"):format(TId))
+                return
             end
         end
     end
