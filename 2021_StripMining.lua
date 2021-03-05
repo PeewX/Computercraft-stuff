@@ -23,19 +23,12 @@ local p = {
 -- Program arguments
 
 function main()
-	-- start turtle thread (Coroutine?)
-	p.run()
-
 	-- start redNet Service (send Infos to Server / retrive commands: start/stop)
+    os.loadAPI("TNClient")
+    TNClient.TN.register()
 
-end
-
-function redNet.send()
-
-end
-
-function redNet.init()
-
+    -- start turtle thread (Coroutine?)
+    p.run()
 end
 
 function p.run()
@@ -54,11 +47,16 @@ function p.move(steps)
 
 	for i = 1, steps do
 		if not p.checkFuel() then
-			p.refuel()
+			if not p.refuel() then
+			    return false
+			end
 		end
 
 		if t.detect() then t.dig() end
-		t.forward()
+		-- send gps if successfully moved
+		if t.forward() then
+		   TNClient.TN.sendInfo()
+		end
 		if t.detectUp() then t.digUp() end
 
 		if not p.checkInventorySpace() then
@@ -104,6 +102,13 @@ function p.refuel()
 			t.refuel()
 		end
 	end
+
+	if not p.checkFuel() then
+	    TNClient.TN.sendInfo("Help Me. I am out of fuel")
+	    return false
+	end
+
+	return true
 end
 
 function p.checkInventorySpace()
@@ -141,6 +146,7 @@ function p.freeInventory()
 
 	if not chestPlaced then
 		-- print error (rednet)?
+		TNClient.TN.sendInfo("My Inventory is full. Its to heavy to go ahead")
 		return false
 	end
 
