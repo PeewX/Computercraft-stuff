@@ -8,6 +8,7 @@ function TN.register()
     local msg = {
         cmd = "register",
         data = {
+			gps = {gps.locate()}
             label = os.getComputerLabel()
         }
     }
@@ -24,12 +25,24 @@ function TN.unregister()
 end
 
 function TN.sendInfo(info)
-    local mstg = {
+    local msg = {
         cmd = "status",
         data = {
             infoMsg = info,
-            gps = { gps.locate() }
+            gps = {gps.locate()}
         }
     }
+	
+    rednet.broadcast(msg, "TN")
+end
+
+function TN.sendPosition()
+	local msg = {
+		cmd = "status",
+		data = {
+			gps = {gps.locate()}
+		}
+    }
+	
     rednet.broadcast(msg, "TN")
 end
