@@ -15,6 +15,14 @@ function TN.register()
     rednet.broadcast(msg, "TN")
 end
 
+function TN.unregister()
+	local msg = {
+		cmd = "unregister"
+	}
+	
+	rednet.broadcast(msg, "TN")
+end
+
 function TN.sendInfo(info)
     local msg = {
         cmd = "status",

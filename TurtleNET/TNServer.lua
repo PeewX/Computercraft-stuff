@@ -4,9 +4,9 @@
 local modem = rednet.open("right")
 local mon = peripheral.find("monitor")
 local TN = {}
-------------------
-
 TN.registered = {}
+
+------------------
 
 function TN.updateMonitor()
     local title = "-- TurtleNET Server --"
@@ -59,22 +59,20 @@ function TN.receive()
         if message.cmd == "register" then
             TN.register(sId, message.data)
         elseif message.cmd == "status" then
-            TN.recvInfo(sId, message.data)
+            TN.receiveInfo(sId, message.data)
         end
     end
 	
 	TN.updateMonitor()
 end
 
+------------------
+
 function TN.register(TId, data)
-    if #TN.registered > 0 then
-        for _, v in pairs(TN.registered) do
-            if v.Id == TId then
-                print(("Turtle %s is already registered"):format(TId))
-                return
-            end
-        end
-    end
+	if TN.isTurtleRegistered(TId) then
+		print(("Turtle %s is already registered"):format(TId))
+		return
+	end
 
     local registerTable = {
         Id = TId,
@@ -88,7 +86,15 @@ function TN.register(TId, data)
     print("Registered Turtle: " .. TId)
 end
 
-function TN.recvInfo(TId, data)
+function TN.unregister(TId)
+	local turtle, key = TN.getTurtleFromId(TId)
+	if turtle then
+		print(("Unregister turtle: %s"):format(turtle.label))
+		table.remove(TN.registered, key)
+	end
+end
+
+function TN.receiveInfo(TId, data)
     for k, v in pairs(TN.registered) do
         if v.Id == TId then
             if data.infoMsg then
@@ -104,5 +110,23 @@ function TN.recvInfo(TId, data)
 end
 
 ------------------
+
+function TN.isTurtleRegistered(TId)
+	return TN.getTurtleFromId(TId) ~= false
+end
+
+function TN.getTurtleFromId(TId)
+	for k, v in pairs(TN.registered) do
+		if v.Id == TId then
+			return v, k
+		end
+	end
+	
+	return false
+end
+
+------------------
+
 TN.updateMonitor()
+
 while true do TN.receive() end
