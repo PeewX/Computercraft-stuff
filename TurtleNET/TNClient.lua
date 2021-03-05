@@ -24,7 +24,7 @@ function TN.unregister()
 end
 
 function TN.sendInfo(info)
-    local msg = {
+    local mstg = {
         cmd = "status",
         data = {
             infoMsg = info,

@@ -58,6 +58,8 @@ function TN.receive()
     if message and message.cmd and message.data then
         if message.cmd == "register" then
             TN.register(sId, message.data)
+		elseif message.cmd == "unregister" then
+			TN.unregister(sId)
         elseif message.cmd == "status" then
             TN.receiveInfo(sId, message.data)
         end
