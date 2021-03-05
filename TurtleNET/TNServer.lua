@@ -68,6 +68,15 @@ function TN.receive()
 end
 
 function TN.register(TId, data)
+    if (#TN.registered > 0) then
+        for k, v in pairs(TN.registered) do
+            if v.Id == TId then
+                print("Turtle " .. TId .. " is already registered")
+                return;
+            end
+        end
+    end
+
     local registerTable = {
         Id = TId,
         label = data.label,

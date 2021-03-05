@@ -8,7 +8,7 @@ local redNet = {}
 local p = {
 	goLeft = true,
 	loadingChunks = 8,
-	tunnelsToDig = 5,
+	tunnelsToDig = 20,
 	minFuel = 3,
 
 	burnable = {
@@ -41,6 +41,8 @@ function p.run()
 		end
 		p.turn()
 	end
+
+	TNClient.TN.sendInfo("I am done. Come and pick me up")
 end
 
 function p.move(steps)
