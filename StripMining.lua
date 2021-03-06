@@ -3,7 +3,6 @@
 -- Pastebin: https://pastebin.com/7Jt83cY2
 ------------------------------------------
 local t = turtle
-local stats = {} -- Containing Turtle Infos (redNet)
 local redNet = {}
 local p = {
 	goLeft = true,
@@ -12,7 +11,7 @@ local p = {
 	minFuel = 3,
 
 	stepsToGo = 0,
-	stepsMoved = 0
+	stepsMoved = 0,
 
 	burnable = {
 		"wood",
@@ -30,7 +29,7 @@ local p = {
 
 function main()
 	-- start redNet Service (send Infos to Server / retrive commands: start/stop)
-    os.loadAPI("TurtleNET/TNClient")
+    os.loadAPI("TurtleNET/TNClient.lua")
     TNClient.TN.register()
 
     -- start turtle thread (Coroutine?)
@@ -66,7 +65,7 @@ function p.move(steps)
 		-- send gps if successfully moved
 		if t.forward() then
 		    p.stepsMoved = p.stepsMoved + 1
-		    TNClient.TN.sendInfo(("Progress %f%"):format((100 / p.stepsToGo) * p.stepsMoved))
+		    TNClient.TN.sendInfo(("Progress %.2f%%"):format((100 / p.stepsToGo) * p.stepsMoved))
 		end
 		if t.detectUp() then t.digUp() end
 
