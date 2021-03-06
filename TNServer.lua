@@ -44,7 +44,7 @@ function TN.updateMonitor()
 					mon.setTextColor(colors.yellow)
 				end
 				
-                mon.write(("  GPS: %d, %d, %d"):format(unpack(v.gps)))
+                mon.write(("  GPS: %d, %d, %d"):format(unpack(v.gps[1])))
 				mon.setTextColor(colors.white)
             end
 			
@@ -146,7 +146,7 @@ function TN.handleData(TId, data)
 		end
 		
 		if data.gps then
-			table.insert(turtle.gps, data.gps)
+			table.insert(turtle.gps, 1, data.gps)
 			
 			if #turtle.gps > 10 then
 				table.remove(turtle.gps, #turtle.gps)

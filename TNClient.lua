@@ -8,7 +8,7 @@ function TN.register()
     local msg = {
         cmd = "register",
         data = {
-			gps = {gps.locate()}
+			gps = {gps.locate()},
             label = os.getComputerLabel()
         }
     }
