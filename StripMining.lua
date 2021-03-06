@@ -11,6 +11,9 @@ local p = {
 	tunnelsToDig = 20,
 	minFuel = 3,
 
+	stepsToGo = 0,
+	stepsMoved = 0
+
 	burnable = {
 		"wood",
 		"plank",
@@ -35,6 +38,8 @@ function main()
 end
 
 function p.run()
+    p.stepsToGo = p.tunnelsToDig * p.loadingChunks * 16
+
 	for i = 0, p.tunnelsToDig do
 		if not p.move(p.loadingChunks * 16) then
 			break;
@@ -60,7 +65,8 @@ function p.move(steps)
 		if t.detect() then t.dig() end
 		-- send gps if successfully moved
 		if t.forward() then
-		   TNClient.TN.sendInfo()
+		    p.stepsMoved = p.stepsMoved + 1
+		    TNClient.TN.sendInfo(("Progress %f%"):format((100 / p.stepsToGo) * p.stepsMoved))
 		end
 		if t.detectUp() then t.digUp() end
 
