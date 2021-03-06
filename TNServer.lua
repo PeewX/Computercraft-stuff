@@ -5,7 +5,7 @@ local modem = rednet.open("right")
 local mon = peripheral.find("monitor")
 local TN = {}
 TN.registered = {}
-TN.contactTimout = 60000
+TN.contactTimeout = 60000
 
 ------------------
 
@@ -16,6 +16,7 @@ function TN.updateMonitor()
     local posX, posY = w/2 - #title/2, 1
 
     mon.clear()
+	mon.setTextScale(0.5)
 	mon.setTextColor(colors.white)
     mon.setCursorPos(posX, posY)
     mon.write(title)
@@ -54,7 +55,7 @@ function TN.updateMonitor()
                 mon.setCursorPos(1, 2 + yOffset)
 				
 				local diff = getTickCount() - v.lastContact
-				if diff > TN.contactTimout then
+				if diff > TN.contactTimeout then
 					mon.setTextColor(colors.red)
 				end
 				
@@ -90,14 +91,15 @@ end
 
 function TN.check()
 	for k, v in pairs(TN.registered) do
-		if v.lastContact then
+		if v.lastContact and not v.contactTimeout then
 			local diff = getTickCount() - v.lastContact
-			if diff > TN.contactTimout then
-				print(("Missing contact from turtle %s since %d seconds!"):format(v.label, TN.contactTimout/1000))
+			if diff > TN.contactTimeout then
+				v.contactTimeout = true
+				print(("Missing contact: %s"):format(v.label))
 				print("Last known positions:")
-				print("   X    Y    Z")
+				print("		X		Y		Z")
 				for _, pos in pairs(v.gps) do
-					print(("  %d    %d    %d"):format(unpack(pos)))
+					print(("		%d		%d		%d"):format(unpack(pos)))
 				end
 				
 				-- Todo: Use a printer peripheral
@@ -155,6 +157,7 @@ function TN.handleData(TId, data)
 			end
 		end
 		
+		turtle.contactTimeout = false
 		turtle.lastContact = getTickCount()
 	end
 end
