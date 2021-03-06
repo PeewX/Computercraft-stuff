@@ -37,7 +37,7 @@ function TN.updateMonitor()
                 mon.write(("  Msg: '%s'"):format(v.infoMsg))
             end
 			
-            if v.gps then
+            if v.gps[1] then
                 yOffset = yOffset + 1
                 mon.setCursorPos(1, 2 + yOffset)
 				
