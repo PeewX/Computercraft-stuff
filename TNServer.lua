@@ -5,7 +5,7 @@ local modem = rednet.open("right")
 local mon = peripheral.find("monitor")
 local TN = {}
 TN.registered = {}
-TN.contactTimout = 6000
+TN.contactTimout = 60000
 
 ------------------
 
@@ -16,6 +16,7 @@ function TN.updateMonitor()
     local posX, posY = w/2 - #title/2, 1
 
     mon.clear()
+	mon.setTextColor(colors.white)
     mon.setCursorPos(posX, posY)
     mon.write(title)
 
@@ -84,6 +85,7 @@ function TN.receive()
     end
 	
 	TN.updateMonitor()
+	TN.check()
 end
 
 function TN.check()
