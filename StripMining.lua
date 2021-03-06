@@ -27,7 +27,7 @@ local p = {
 
 function main()
 	-- start redNet Service (send Infos to Server / retrive commands: start/stop)
-    os.loadAPI("TNClient")
+    os.loadAPI("TurtleNET/TNClient")
     TNClient.TN.register()
 
     -- start turtle thread (Coroutine?)
