@@ -2,8 +2,10 @@
 -- ©2021 Namo
 -- Pastebin: https://pastebin.com/7Jt83cY2
 ------------------------------------------
+os.loadAPI("TurtleNET/TNClient.lua")
+local TN = TNClient.TN
+
 local t = turtle
-local redNet = {}
 local p = {
 	goLeft = true,
 	loadingChunks = 8,
@@ -23,17 +25,21 @@ local p = {
 }
 ------------------------------------------
 
--- TODO:
--- redNet Service
--- Program arguments
+local input = {...}
+if #input > 0 then
+	if #input ~= 3 and tonumber(input[2]) and tonumber(input[3]) then
+		p.goLeft = input[1] == "left"
+		p.loadingChunks = math.abs(math.floor(input[2] or 8))
+		p.tunnelsToDig = math.abs(math.floor(input[3] or 20))
+	else
+		print("Invalid args!\nstripmine left/right chunksMv tunnelCt\nExample: stripmine left 8 20")
+		return
+	end
+end
 
 function main()
-	-- start redNet Service (send Infos to Server / retrive commands: start/stop)
-    os.loadAPI("TurtleNET/TNClient.lua")
-    TNClient.TN.register()
-
-    -- start turtle thread (Coroutine?)
-    p.run()
+    TN.register()
+	p.run()
 end
 
 function p.run()
@@ -46,7 +52,7 @@ function p.run()
 		p.turn()
 	end
 
-	TNClient.TN.sendInfo("I am done. Come and pick me up")
+	TN.sendInfo("I am done. Come and pick me up")
 end
 
 function p.move(steps)
@@ -65,7 +71,7 @@ function p.move(steps)
 		-- send gps if successfully moved
 		if t.forward() then
 		    p.stepsMoved = p.stepsMoved + 1
-		    TNClient.TN.sendInfo(("Progress %.2f%%"):format((100 / p.stepsToGo) * p.stepsMoved))
+		    TN.sendInfo(("Progress %.2f%%"):format((100 / p.stepsToGo) * p.stepsMoved))
 		end
 		if t.detectUp() then t.digUp() end
 
@@ -114,7 +120,7 @@ function p.refuel()
 	end
 
 	if not p.checkFuel() then
-	    TNClient.TN.sendInfo("Help Me. I am out of fuel")
+	    TN.sendInfo("Help Me. I am out of fuel")
 	    return false
 	end
 
@@ -148,6 +154,8 @@ function p.freeInventory()
 				t.digDown()
 				t.placeDown()
 				chestPlaced = true
+				
+				TN.sendInfo(("Placed Chest: %d, %d, %d"):format({gps.locate()}))
 			else
 				table.insert(itemsToDrop, i)
 			end
@@ -155,8 +163,7 @@ function p.freeInventory()
 	end
 
 	if not chestPlaced then
-		-- print error (rednet)?
-		TNClient.TN.sendInfo("My Inventory is full. Its to heavy to go ahead")
+		TN.sendInfo("My Inventory is full. Its to heavy to go ahead")
 		return false
 	end
 
