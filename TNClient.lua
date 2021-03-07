@@ -1,7 +1,7 @@
 --TurtleNET Client
 --Pastebin: https://pastebin.com/JN8iU1V6
 ------------------
-rednet.open("left");
+peripheral.find("modem", rednet.open)
 TN = {}
 
 function TN.register()

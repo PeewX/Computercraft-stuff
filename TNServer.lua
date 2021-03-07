@@ -1,7 +1,7 @@
 --TurtleNET Server
 --Pastebin: https://pastebin.com/q9Ngw9Fg
 ------------------
-local modem = rednet.open("right")
+local modem = peripheral.find("modem", rednet.open)
 local mon = peripheral.find("monitor")
 local TN = {}
 TN.registered = {}
