@@ -68,11 +68,12 @@ function p.move(steps)
 		end
 
 		if t.detect() then t.dig() end
+
 		-- send gps if successfully moved
-		if t.forward() then
-		    p.stepsMoved = p.stepsMoved + 1
-		    TN.sendInfo(("Progress %.2f%%"):format((100 / p.stepsToGo) * p.stepsMoved))
-		end
+		while not t.forward() do sleep(0.01) end
+		p.stepsMoved = p.stepsMoved + 1
+        TN.sendInfo(("Progress %.2f%%"):format((100 / p.stepsToGo) * p.stepsMoved))
+
 		if t.detectUp() then t.digUp() end
 
 		if not p.checkInventorySpace() then
