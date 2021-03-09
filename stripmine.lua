@@ -87,7 +87,6 @@ function p.move(steps)
 end
 
 function p.turn()
-	p.goLeft = not p.goLeft
 	if p.goLeft then
 		-- turn left
 		t.turnLeft()
@@ -99,6 +98,7 @@ function p.turn()
 		p.move(3)
 		t.turnRight()
 	end
+	p.goLeft = not p.goLeft
 end
 
 function p.checkFuel()
