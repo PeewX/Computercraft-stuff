@@ -70,7 +70,7 @@ function p.move(steps)
 		if t.detect() then t.dig() end
 
 		-- send gps if successfully moved
-		while not t.forward() do sleep(0.01) end
+		while not t.forward() do sleep(0.05) end
 		p.stepsMoved = p.stepsMoved + 1
         TN.sendInfo(("Progress %.2f%%"):format((100 / p.stepsToGo) * p.stepsMoved))
 
