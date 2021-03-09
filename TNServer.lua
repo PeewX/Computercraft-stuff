@@ -46,7 +46,8 @@ function TN.updateMonitor()
 					mon.setTextColor(colors.yellow)
 				end
 				
-                mon.write(("  GPS: %d, %d, %d"):format(unpack(v.gps[1])))
+				local x, y, z = unpack(v.gps[1])
+                mon.write(("  GPS: %s, %s, %s"):format(x or "-", y or "-", z or "-"))
 				mon.setTextColor(colors.white)
             end
 			
