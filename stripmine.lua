@@ -27,7 +27,7 @@ local p = {
 
 local input = {...}
 if #input > 0 then
-	if #input ~= 3 and tonumber(input[2]) and tonumber(input[3]) then
+	if #input == 3 and tonumber(input[2]) and tonumber(input[3]) then
 		p.goLeft = input[1] == "left"
 		p.loadingChunks = math.abs(math.floor(input[2] or 8))
 		p.tunnelsToDig = math.abs(math.floor(input[3] or 20))
@@ -68,9 +68,13 @@ function p.move(steps)
 		end
 
 		if t.detect() then t.dig() end
-
+		
+		while not t.forward() do
+			t.dig()
+			sleep(0.5)
+		end
+		
 		-- send gps if successfully moved
-		while not t.forward() do sleep(0.05) end
 		p.stepsMoved = p.stepsMoved + 1
         TN.sendInfo(("Progress %.2f%%"):format((100 / p.stepsToGo) * p.stepsMoved))
 
