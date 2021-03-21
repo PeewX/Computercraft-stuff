@@ -4,16 +4,16 @@ local modem = peripheral.find("modem", rednet.open)
 local mon = peripheral.find("monitor")
 local FLS = {positions = {}}
 
-local x = {-590, -594}
-local z = {-1239, -1235}
+local x = {-594, -590}
+local z = {-1235, -1239}
 local h = 70
 local monSize = 5
 
 function FLS.updateMonitor()
 	for k, v in pairs(FLS.positions) do
 		if getTickCount() - v.tick > 5000 then
-			local relX = v.pos[1] - x[1]
-			local relY = v.pos[3] - z[1]
+			local relX = x[2] - v.pos[1]
+			local relY = z[2] - v.pos[3]
 			print(relX .. " - " .. relY)
 			local w, h = mon.getSize()
 			mon.setCursorPos(w/monSize*relX, h/monSize*relY)
@@ -33,8 +33,8 @@ function FLS.receive()
 		if FLS.checkPosition(message) then
 			table.insert(FLS.positions, {pos = message, tick = getTickCount()})
 		end
-	else
-		print("Received invalid message")
+--	else
+--		print("Received invalid message")
 	end
 	
 	FLS.updateMonitor()
