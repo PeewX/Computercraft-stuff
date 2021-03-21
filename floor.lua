@@ -7,19 +7,19 @@ local FLS = {positions = {}}
 local x = {-595, -589}
 local z = {-1240, -1234}
 local h = 70
-local monSize = 5
+local monSize = 7
 
 function FLS.updateMonitor()
 	mon.clear()
 	for k, v in pairs(FLS.positions) do
-		if getTickCount() - v.tick > 5000 then
+		if getTickCount() - v.tick < 500 then
 			local relX = x[2] - v.pos[1]
 			local relY = z[2] - v.pos[3]
 			print(("X: %.2f, Y: %.2f"):format(relX, relY))
 			local w, h = mon.getSize()
 			mon.setCursorPos(w/monSize*relX, h/monSize*relY)
 			mon.setTextColor(colors.red)
-			mon.write(".")
+			mon.write("o")
 		end
 	end
 end
