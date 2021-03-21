@@ -5,7 +5,7 @@ local mon = peripheral.find("monitor")
 local FLS = {positions = {}}
 
 local x = {-594, -590}
-local z = {-1235, -1239}
+local z = {-1239, -1235}
 local h = 70
 local monSize = 5
 
@@ -24,7 +24,11 @@ function FLS.updateMonitor()
 end
 
 function FLS.checkPosition(position)
-	return (position[1] >= x[1] and position[1] <= x[2] and	position[3] >= z[1] and	position[3] <= z[2])
+	return (
+	position[1] >= x[1] and
+	position[1] <= x[2] and
+	position[3] >= z[1] and
+	position[3] <= z[2])
 end
 
 function FLS.receive()
@@ -32,6 +36,8 @@ function FLS.receive()
 	if message and type(message) == "table" then
 		if FLS.checkPosition(message) then
 			table.insert(FLS.positions, {pos = message, tick = getTickCount()})
+		else
+			print("Invalid pos")
 		end
 --	else
 --		print("Received invalid message")
