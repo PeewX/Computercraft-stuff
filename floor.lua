@@ -5,7 +5,7 @@ local mon = peripheral.find("monitor")
 local FLS = {positions = {}}
 
 local x = {-595, -589}
-local z = {-1240, -1234}
+local z = {-1240, -1233}
 local h = 70
 local monSize = 7
 
