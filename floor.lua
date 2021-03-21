@@ -33,7 +33,7 @@ function FLS.checkPosition(position)
 end
 
 function FLS.receive()
-	local sId, message = rednet.receive("FLS", 1)
+	local sId, message = rednet.receive("FLS", 0.2)
 	if message and type(message) == "table" then
 		if FLS.checkPosition(message) then
 			table.insert(FLS.positions, {pos = message, tick = getTickCount()})
