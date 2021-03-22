@@ -9,21 +9,21 @@ local z = {-1240, -1233}
 local h = 70
 local monSize = 6
 
+local chars = {"x", "o", "+", "#", "*"}
+
 mon.clear()
 
 function FLS.updateMonitor()
-    char = "o"
-
 	for k, v in pairs(FLS.positions) do
-	    diff = getTickCount() - v.tick
+	    local diff = getTickCount() - v.tick
 		if diff < 100 then -- paint new position
             FLS.updateCursorPos(v)
 			mon.setTextColor(v.color)
-			mon.write(char)
+			mon.write(v.char)
 		elseif diff > 500 then -- remove old position
 		    FLS.updateCursorPos(v)
         	mon.setTextColor(colors.black)
-        	mon.write(char)
+        	mon.write(v.char)
         	table.remove(FLS.positions, k)
 		end
 	end
@@ -46,15 +46,13 @@ function FLS.checkPosition(position)
 end
 
 function FLS.receive()
-	local sId, message = rednet.receive("FLS", 0.2)
+	local sId, message = rednet.receive("FLS", 0.05)
 	if message and type(message) == "table" then
 		if FLS.checkPosition(message) then
-			table.insert(FLS.positions, {color = 2^(sId%15), pos = message, tick = getTickCount()})
+			table.insert(FLS.positions, {char = chars[sId%5], color = 2^(sId%15), pos = message, tick = getTickCount()})
 		else
 			print("Invalid pos")
 		end
---	else
---		print("Received invalid message")
 	end
 	
 	FLS.updateMonitor()
