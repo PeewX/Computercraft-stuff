@@ -10,18 +10,28 @@ local h = 70
 local monSize = 6
 
 function FLS.updateMonitor()
-	mon.clear()
+    char = "o"
+
 	for k, v in pairs(FLS.positions) do
-		if getTickCount() - v.tick < 500 then
-			local relX = x[2] - v.pos[1]
-			local relY = z[2] - v.pos[3]
-			print(("X: %.2f, Y: %.2f"):format(relX, relY))
-			local w, h = mon.getSize()
-			mon.setCursorPos(w/monSize*relX, h/monSize*relY)
+	    diff = getTickCount() - v.tick
+		if diff < 100 then -- paint new position
+            FLS.updateCursorPos()
 			mon.setTextColor(v.color)
-			mon.write("o")
+			mon.write(char)
+		elseif diff > 500 then -- remove old position
+		    FLS.updateCursorPos()
+        	mon.setTextColor(color.black)
+        	mon.write(char)
 		end
 	end
+end
+
+function FLS.updateCursorPos(position)
+    local relX = x[2] - v.pos[1]
+	local relY = z[2] - v.pos[3]
+	print(("X: %.2f, Y: %.2f"):format(relX, relY))
+	local w, h = mon.getSize()
+	mon.setCursorPos(w/monSize*relX, h/monSize*relY)
 end
 
 function FLS.checkPosition(position)
