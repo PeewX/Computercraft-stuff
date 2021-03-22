@@ -24,7 +24,7 @@ function FLS.updateMonitor()
 		    FLS.updateCursorPos(v)
         	mon.setTextColor(colors.black)
         	mon.write(char)
-        	table.remove(FLS.positions, v)
+        	table.remove(FLS.positions, k)
 		end
 	end
 end
