@@ -15,20 +15,20 @@ function FLS.updateMonitor()
 	for k, v in pairs(FLS.positions) do
 	    diff = getTickCount() - v.tick
 		if diff < 100 then -- paint new position
-            FLS.updateCursorPos()
+            FLS.updateCursorPos(v)
 			mon.setTextColor(v.color)
 			mon.write(char)
 		elseif diff > 500 then -- remove old position
-		    FLS.updateCursorPos()
-        	mon.setTextColor(color.black)
+		    FLS.updateCursorPos(v)
+        	mon.setTextColor(colors.black)
         	mon.write(char)
 		end
 	end
 end
 
 function FLS.updateCursorPos(position)
-    local relX = x[2] - v.pos[1]
-	local relY = z[2] - v.pos[3]
+    local relX = x[2] - position.pos[1]
+	local relY = z[2] - position.pos[3]
 	print(("X: %.2f, Y: %.2f"):format(relX, relY))
 	local w, h = mon.getSize()
 	mon.setCursorPos(w/monSize*relX, h/monSize*relY)
