@@ -9,6 +9,8 @@ local z = {-1240, -1233}
 local h = 70
 local monSize = 6
 
+mon.clear()
+
 function FLS.updateMonitor()
     char = "o"
 
@@ -22,6 +24,7 @@ function FLS.updateMonitor()
 		    FLS.updateCursorPos(v)
         	mon.setTextColor(colors.black)
         	mon.write(char)
+        	table.remove(FLS.positions, v)
 		end
 	end
 end
