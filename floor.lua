@@ -4,10 +4,10 @@ local modem = peripheral.find("modem", rednet.open)
 local mon = peripheral.find("monitor")
 local FLS = {positions = {}}
 
-local x = {-595, -589}
+local x = {-596, -589}
 local z = {-1240, -1233}
 local h = 70
-local monSize = 7
+local monSize = 6
 
 function FLS.updateMonitor()
 	mon.clear()
@@ -18,7 +18,7 @@ function FLS.updateMonitor()
 			print(("X: %.2f, Y: %.2f"):format(relX, relY))
 			local w, h = mon.getSize()
 			mon.setCursorPos(w/monSize*relX, h/monSize*relY)
-			mon.setTextColor(colors.red)
+			mon.setTextColor(v.color)
 			mon.write("o")
 		end
 	end
@@ -36,7 +36,7 @@ function FLS.receive()
 	local sId, message = rednet.receive("FLS", 0.2)
 	if message and type(message) == "table" then
 		if FLS.checkPosition(message) then
-			table.insert(FLS.positions, {pos = message, tick = getTickCount()})
+			table.insert(FLS.positions, {color = 2^(sId%15), pos = message, tick = getTickCount()})
 		else
 			print("Invalid pos")
 		end
