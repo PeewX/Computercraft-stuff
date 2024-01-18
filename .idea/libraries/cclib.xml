@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="cclib" type="Lua">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/cclib.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
