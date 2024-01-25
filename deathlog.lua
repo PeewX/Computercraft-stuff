@@ -123,4 +123,9 @@ function getPlayerDeaths(playerName)
     return tonumber(string.sub(deathString, 2)) or 0
 end
 
+function saveToVault(name, amount)
+    db[name] = amount
+    vault.flush(db)
+end
+
 main()
