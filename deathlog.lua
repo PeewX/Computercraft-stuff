@@ -3,6 +3,8 @@ vault.setDir("/.vault")
 local db = vault.open("deaths.np")
 
 function main()
+    drawIncidentScreen()
+
     while true do
         -- Update Day box
         drawDayBox(5, 6, getNumberOfIncidentFreeDays())
@@ -17,7 +19,6 @@ function main()
 
             if (currentDeaths > savedDeaths) then
                 handleNewDeath()
-
                 db[v] = currentDeaths
             end
         end
@@ -26,11 +27,9 @@ function main()
     end
 end
 
-function handleNewDeath()
-    local incidentFreeDays = getNumberOfIncidentFreeDays()
-
+function drawIncidentScreen()
     local monitor = peripheral.find("monitor")
-    local oldTerm = term.redirect(monitor)
+    term.redirect(monitor)
 
     term.setBackgroundColor(colors.black)
     term.clear()
@@ -56,7 +55,7 @@ function handleNewDeath()
     term.setCursorPos(margin+1, 5)
     term.write("last injury")
 
-    drawDayBox(margin+4, 6, incidentFreeDays)
+    drawDayBox(margin+4, 6, getNumberOfIncidentFreeDays())
 
     -- Total Accidents
     term.setCursorPos(margin+1, 9)
@@ -65,14 +64,19 @@ function handleNewDeath()
     term.write("Total injuries")
 
     drawDayBox(margin+4, 10, getAllDeaths())
+end
 
-    term.redirect(oldTerm)
+function handleNewDeath()
+    saveToVault("lastIncident", os.day() or db["lastIncident"])
+
+    drawIncidentScreen()
 end
 
 function drawDayBox(x, y, days)
     paintutils.drawFilledBox(x, y, x+3, y+1, colors.white)
     term.setCursorPos(x+1, y+1)
     term.setBackgroundColor(colors.white)
+    term.setTextColor(colors.black)
     term.write(days)
 end
 
@@ -114,9 +118,9 @@ function getAllDeaths()
 end
 
 function getPlayerDeaths(playerName)
-    local _, death = commands.exec("scoreboard ")
-    local deathString = string.gfind(death[1], "%d")()
-    return tonumber(deathString) or 1
+    local _, death = commands.exec("scoreboard players get " .. playerName .. " Deaths")
+    local deathString = string.gfind(death[1], " %d+")()
+    return tonumber(string.sub(deathString, 2)) or 0
 end
 
 main()
