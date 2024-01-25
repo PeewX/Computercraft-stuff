@@ -3,9 +3,11 @@ local meBridge
 
 local protocol = "meInv"
 
-init()
-while true do
-    recieveRednet()
+function main()
+    init()
+    while true do
+        recieveRednet()
+    end
 end
 
 function init()
@@ -25,6 +27,8 @@ function recieveRednet()
         table.remove(msgTable, 1)
         local name = table.concat(msgTable, " ")
         sendItem(amount, name)
+    elseif (funcName == "toggleOffHand") then
+        toggleOffHand()
     end
 end
 
@@ -73,3 +77,5 @@ function splitString(text)
 
     return resultTable
 end
+
+main()
