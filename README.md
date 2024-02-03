@@ -1,2 +1,2 @@
 # Computercraft-stuff
-Some Computercraft stuff :D
+Simple reactor control script
