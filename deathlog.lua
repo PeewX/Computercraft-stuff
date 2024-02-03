@@ -23,23 +23,23 @@ function main()
             end
         end
 
-        sleep(60)
+        sleep(5)
     end
 end
 
 function drawIncidentScreen()
     local monitor = peripheral.find("monitor")
     term.redirect(monitor)
+    term.setCursorBlink(false)
 
     term.setBackgroundColor(colors.black)
-    term.clear()
-
+    
     local textScale = 0.5
     monitor.setTextScale(textScale)
 
     local margin = 1
 
-    paintutils.drawFilledBox(margin, margin, 32*textScale, 24*textScale, colors.orange)
+    paintutils.drawFilledBox(margin, margin, 16, 12, colors.orange)
 
     -- Header
     term.setCursorPos(margin+1, margin+1)
@@ -67,7 +67,7 @@ function drawIncidentScreen()
 end
 
 function handleNewDeath()
-    saveToVault("lastIncident", os.day() or db["lastIncident"])
+    saveToVault("lastIncident", getUnixtime())
 
     drawIncidentScreen()
 end
@@ -80,9 +80,18 @@ function drawDayBox(x, y, days)
     term.write(days)
 end
 
-function getNumberOfIncidentFreeDays()
+function getUnixtime()
+  local response = http.get("https://worldtimeapi.org/api/timezone/Europe/Berlin.json")
+  local result = textutils.unserialiseJSON(response.readAll())
+  return result.unixtime
+end
+
+function getNumberOfIncidentFreeDays()    
     local lastIncident = db["lastIncident"] or 0
-    return os.day() - lastIncident
+    local unixtime = getUnixtime()
+    local diff = unixtime - lastIncident
+    
+    return math.floor(diff / 60 / 60 / 24)
 end
 
 function getOnlinePlayers()
@@ -118,14 +127,15 @@ function getAllDeaths()
 end
 
 function getPlayerDeaths(playerName)
-    local _, death = commands.exec("scoreboard players get " .. playerName .. " Deaths")
-    local deathString = string.gfind(death[1], " %d+")()
-    return tonumber(string.sub(deathString, 2)) or 0
+    local _, _, deaths = commands.exec("scoreboard players get " .. playerName .. " Deaths")
+    --local deathString = string.gfind(death[1], " %d+")()
+    --return tonumber(string.sub(deathString, 2)) or 0
+    return deaths
 end
 
 function saveToVault(name, amount)
-    db[name] = amount
-    vault.flush(db)
+  db[name] = amount
+  vault.flush(db)
 end
 
 main()
